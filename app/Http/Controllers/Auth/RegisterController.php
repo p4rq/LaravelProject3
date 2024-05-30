@@ -3,15 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Mail;
-use App\Models\Verifytoken;
-use App\Mail\WelcomeMail;
-use Log;
+
 class RegisterController extends Controller
 {
     /*
@@ -24,13 +20,16 @@ class RegisterController extends Controller
     | provide this functionality without requiring any additional code.
     |
     */
+
     use RegistersUsers;
+
     /**
      * Where to redirect users after registration.
      *
      * @var string
      */
-    protected $redirectTo = '/verify-account';
+    protected $redirectTo = '/home';
+
     /**
      * Create a new controller instance.
      *
@@ -63,22 +62,11 @@ class RegisterController extends Controller
      * @return \App\Models\User
      */
     protected function create(array $data)
-    {   
-        $user = User::create([
-            'name'=> $data['name'],
-            'email'=> $data['email'],
-            'password'=> Hash::make($data['password']),
+    {
+        return User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
         ]);
-        $validToken = rand(10,100..'2022');
-        Log::info("valid token is".$validToken);
-        $get_token = new Verifytoken();
-        $get_token->token =  $validToken;
-        $get_token->email =  $data['email'];
-        $get_token->save();
-        $get_user_email = $data['email'];
-        $get_user_name = $data['name'];
-        Mail::to($data['email'])->send(new WelcomeMail($get_user_email,$validToken,$get_user_name));
-        return $user;
-
     }
 }

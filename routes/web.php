@@ -35,3 +35,7 @@ Route::post('update-profile', [App\Http\Controllers\AddProfileController::class,
 
 
 
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
